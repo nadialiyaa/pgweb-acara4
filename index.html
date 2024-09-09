@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leaflet JS</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <style>
+        #map {
+            width: 100%;
+            height: 580px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        // Inisialisasi peta
+        var map = L.map("map").setView([-6.1769312, 106.8262822], 10);
+
+        // Tile Layer Base Map
+        var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution:
+                '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        });
+
+        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
+
+        var rupabumiindonesia = L.tileLayer('https://geoservices.big.go.id/rbi/rest/services/BASEMAP/Rupabumi_Indonesia/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Badan Informasi Geospasial'
+        });
+
+        // Menambahkan basemap ke dalam peta
+        rupabumiindonesia.addTo(map);
+
+
+        // Menambahkan basemap ke dalam peta
+        osm.addTo(map);
+
+        // Marker
+        var marker = L.marker([-6.3263872, 106.8927348]);
+        var marker2 = L.marker([-6.3410905, 106.8780178]);
+        var marker3 = L.marker([-6.3443015, 106.8936325]);
+
+        // Menambahkan marker ke dalam peta
+        marker.addTo(map);
+        marker2.addTo(map);
+        marker3.addTo(map);
+
+        //PopUp
+        marker.bindPopup("<b>Home</b><br>Cipayung 102");
+        marker.openPopup();
+        marker2.bindPopup("<b>Home</b><br>Manunggal 49C");
+        marker2.openPopup();
+        marker3.bindPopup("<b>Home</b><br>Gg. Salak 5");
+        marker3.openPopup();
+
+        // Tooltip
+        marker.bindTooltip("Nadie's Home");
+        marker.openTooltip();
+        marker2.bindTooltip("Pocie's Home");
+        marker2.openTooltip();
+        marker3.bindTooltip("Jiddie's Home");
+        marker3.openTooltip();
+
+        // Circle
+        var circle = L.circle([-6.1753924, 106.8271528], {
+            color: "black", // warna garis
+            opacity: 0.5, // opacity garis
+            fillColor: "#c2d6f6", // warna fill
+            fillOpacity: 1, // opacity fill
+            radius: 1000, // radius dalam meter
+        });
+
+        // Menambahkan circle ke dalam peta
+        circle.addTo(map);
+
+        // Popup
+        circle.bindPopup("<b>Monumen Nasional</b><br>Jakarta Pusat");
+        circle.openPopup();
+
+        // Polyline
+        var vertexPolyline = [
+            [-6.3263872, 106.8927348],
+            [-6.3410905, 106.87801780],
+            [-6.3443015, 106.89363250],
+        ];
+        var polyline = L.polyline(vertexPolyline, {
+            color: "red", // warna garis
+            weight: 3, // ketebalan garis
+            opacity: 1, // opacity garis
+        });
+
+        // Menambahkan polyline ke dalam peta
+        polyline.addTo(map);
+
+        // Polygon
+        var vertexPolygon = [
+            [-6.3263872, 106.8927348],
+            [-6.3410905, 106.87801780],
+            [-6.3443015, 106.89363250],
+        ];
+        var polygon = L.polygon(vertexPolygon, {
+            color: "purple", // warna garis
+            weight: 3, // ketebalan garis
+            opacity: 1, // opacity garis
+            fillColor: "#0f3", // warna fill
+            fillOpacity: 0.5, // opacity fill
+        });
+
+        // Menambahkan polygon ke dalam peta
+        polygon.addTo(map);
+
+        // Image Overlay
+        var imageUrl = 'data/hillshade_jakarta.png';
+        var imageExtent = [[-6.25, 106.75], [-6.0, 107.0]];
+        var imageOverlay = L.imageOverlay(imageUrl, imageExtent, {
+            opacity:0.7
+        });
+
+        // Menambahkan image overlay ke dalam peta
+        imageOverlay.addTo(map);
+
+        // Control Layer
+        var baseMaps = {
+            "OpenStreetMap": osm,
+            "Esri_WorldImagery ": Esri_WorldImagery,
+            "Rupa Bumi Indonesia": rupabumiindonesia,
+        };
+
+        var overlayMaps = {
+            "marker": marker,
+            "marker2": marker2,
+            "marker3": marker3,
+            "circle": circle,
+            "polyline": polyline,
+            "polygon": polygon,
+        };
+
+        var controllayer = L.control.layers(baseMaps, overlayMaps, {
+            collapsed:false, position: "topleft",
+        });
+        controllayer.addTo(map);
+
+        // Scale
+        var scale = L.control.scale({
+            position: "bottomleft",
+            imperial: true,
+        })
+        scale.addTo(map);
+
+        // Geolocation
+        map.locate({
+            setView: true,
+            maxZoom: 16,
+        });
+
+        // Fungsi untuk menampilkan lokasi
+        function onLocationFound(e) {
+            var radius = e.accuracy / 100;
+
+            // Menampilkan marker pada lokasi 
+            L.marker(e.latlng).addTo(map).bindPopup("Anda berada dalam radius " + radius + " meter dari titik ini").openPopup();
+
+            // Menampilkan circle pada lokasi
+            L.circle(e.latlng, radius).addTo(map);
+        }
+
+        map.on("locationfound", onLocationFound);
+
+        // Fungsi untuk menampilkan pesan error
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+        map.on("locationerror", onLocationError);
+
+
+    </script>
+</body>
+
+</html>
